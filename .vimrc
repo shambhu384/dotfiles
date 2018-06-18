@@ -1,106 +1,146 @@
-" Loader
-execute pathogen#infect()
-syntax on
-filetype plugin indent on
-
-"#Nerdtree"
-
-let g:NERDTreeWinSize = 38
-
-" Stick this in your vimrc
-autocmd StdinReadPre * let s:std_in=1
-autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
-
-" open NERDTree automatically 
-autocmd StdinReadPre * let s:std_in=1
-autocmd VimEnter * if argc() == 1 && isdirectory(argv()[0]) && !exists("s:std_in") | exe 'NERDTree' argv()[0] | wincmd p | ene | endif
-
-" Mapping
-map <C-n> :NERDTreeToggle<CR>
-
-" Style
-let g:NERDTreeDirArrowExpandable = '▸'
-let g:NERDTreeDirArrowCollapsible = '▾'
-"/Nerdtree"
-"#Syntastic "
-set statusline+=%#warningmsg#
-set statusline+=%{SyntasticStatuslineFlag()}
-set statusline+=%*
-
-let g:syntastic_always_populate_loc_list = 1
-let g:syntastic_auto_loc_list = 1
-let g:syntastic_check_on_open = 1
-let g:syntastic_check_on_wq = 0
-"/Syntastic"
-
-"#Airline"
-
-let g:airline#extensions#tabline#enabled = 1
-let g:airline#extensions#tabline#left_sep = ' '
-let g:airline#extensions#tabline#left_alt_sep = '|'
-"#Airline"
-let g:airline_theme='simple'
-"/Airline"
-
-
-"# Default "
-
-set expandtab
-set tabstop=4
+" Douglas Black
+" Colors {{{
+syntax enable           " enable syntax processing
+colorscheme apprentice 
+"set termguicolors
+" }}}
+" Misc {{{
+set backspace=indent,eol,start
+let g:vimwiki_list = [{'path': '~/.wiki/'}]
+set clipboard=unnamed
+" }}}
+" Spaces & Tabs {{{
+set tabstop=4           " 4 space tab
+set expandtab           " use spaces for tabs
+set softtabstop=4       " 4 space tab
 set shiftwidth=4
+set modelines=1
+filetype indent on
 set autoindent
-set smartindent
-set nocompatible
-set bs=2
-set background=dark
-set wrapmargin=4
-set t_Co=256
-" colorscheme wombat256mod
-colorscheme apprentice
-set statusline+=%#warningmsg#
-set statusline+=%{SyntasticStatuslineFlag()}
-set statusline+=%*
+" }}}
+" UI Layout {{{
+set showcmd             " show command in bottom bar
+set nocursorline        " highlight current line
+set wildmenu
+set lazyredraw
+set showmatch           " higlight matching parenthesis
+set fillchars+=vert:┃
+" }}}
+" Searching {{{
+set ignorecase          " ignore case when searching
+set incsearch           " search as characters are entered
+set hlsearch            " highlight all matches
+" }}}
+" Folding {{{
+"=== folding ===
+set foldmethod=indent   " fold based on indent level
+set foldnestmax=10      " max 10 depth
+set foldenable          " don't fold files by default on open
+nnoremap <space> za
+set foldlevelstart=10   " start with fold level of 1
+" }}}
+" Line Shortcuts {{{
+nnoremap j gj
+nnoremap k gk
+nnoremap gV `[v`]
+" }}}
+" Leader Shortcuts {{{
+let mapleader=","
+nnoremap <leader>m :silent make\|redraw!\|cw<CR>
+nnoremap <leader>h :A<CR>
+nnoremap <leader>ev :vsp $MYVIMRC<CR>
+nnoremap <leader>et :exec ":vsp /Users/dblack/notes/vim/" . strftime('%m-%d-%y') . ".md"<CR>
+nnoremap <leader>ez :vsp ~/.zshrc<CR>
+nnoremap <leader>sv :source $MYVIMRC<CR>
+nnoremap <leader>l :call <SID>ToggleNumber()<CR>
+nnoremap <leader><space> :noh<CR>
+nnoremap <leader>s :mksession<CR>
+nnoremap <leader>a :Ag 
+nnoremap <leader>c :SyntasticCheck<CR>:Errors<CR>
+nnoremap <leader>1 :set number!<CR>
+nnoremap <leader>d :GoDoc 
+nnoremap <leader>t :TestFile<CR>
+nnoremap <leader>r :call <SID>RunFile()<CR>
+nnoremap <leader>b :call <SID>BuildFile()<CR>
+vnoremap <leader>y "+y
+" }}}
 
-"let &colorcolumn=join(range(130,999),",")
-let &colorcolumn="120,".join(range(130,999),",")
-
-" Adding NerdFonts
-set nocompatible " use vim defaults
-filetype off " filetype needs to be off before Vundle
-set encoding=utf8
-
-" Tabbar
-let g:toggleTabs = 1
-
-
-colorscheme apprentice
-"/ Default
-
-" TagBar
-nmap <F8> :TagbarToggle<CR>
-
-" vim-javascript
-let g:javascript_plugin_jsdoc = 1
-let g:javascript_plugin_ngdoc = 1
-let g:javascript_plugin_flow = 1
-augroup javascript_folding
-    au!
-    au FileType javascript setlocal foldmethod=syntax
+" CtrlP {{{
+let g:ctrlp_match_window = 'bottom,order:ttb'
+let g:ctrlp_switch_buffer = 0
+let g:ctrlp_working_path_mode = 0
+let g:ctrlp_custom_ignore = '\vbuild/|dist/|venv/|target/|\.(o|swp|pyc|egg)$'
+" }}}
+" Syntastic {{{
+let g:syntastic_python_flake8_args='--ignore=E501'
+let g:syntastic_ignore_files = ['.java$']
+let g:syntastic_python_python_exec = 'python3'
+" }}}
+" AutoGroups {{{
+augroup configgroup
+    autocmd!
+    autocmd VimEnter * highlight clear SignColumn
+    autocmd BufWritePre *.php,*.py,*.js,*.txt,*.hs,*.java,*.md,*.rb :call <SID>StripTrailingWhitespaces()
+    autocmd BufEnter *.cls setlocal filetype=java
+    autocmd BufEnter *.zsh-theme setlocal filetype=zsh
+    autocmd BufEnter Makefile setlocal noexpandtab
+    autocmd BufEnter *.sh setlocal tabstop=2
+    autocmd BufEnter *.sh setlocal shiftwidth=2
+    autocmd BufEnter *.sh setlocal softtabstop=2
+    autocmd BufEnter *.py setlocal tabstop=4
+    autocmd BufEnter *.md setlocal ft=markdown
+    autocmd BufEnter *.go setlocal noexpandtab
+    autocmd BufEnter *.avsc setlocal ft=json
 augroup END
+" }}}
+" Testing {{{
+let test#strategy = 'neovim'
+let test#python#runner = 'nose'
+" }}}
+" Backups {{{
+set backup
+set backupdir=~/.vim-tmp,~/.tmp,~/tmp,/var/tmp,/tmp
+set backupskip=/tmp/*,/private/tmp/*
+set directory=~/.vim-tmp,~/.tmp,~/tmp,/var/tmp,/tmp
+set writebackup
+" }}}
+" Vim Plugin {{{
+set rtp+=~/.vim/bundle/Vundle.vim
+call vundle#begin()
+" let Vundle manage Vundle, required
+Plugin 'VundleVim/Vundle.vim'
 
-let g:javascript_conceal_function             = "ƒ"
-let g:javascript_conceal_null                 = "ø"
-let g:javascript_conceal_this                 = "@"
-let g:javascript_conceal_return               = "⇚"
-let g:javascript_conceal_undefined            = "¿"
-let g:javascript_conceal_NaN                  = "ℕ"
-let g:javascript_conceal_prototype            = "¶"
-let g:javascript_conceal_static               = "•"
-let g:javascript_conceal_super                = "Ω"
-let g:javascript_conceal_arrow_function       = "⇒"
-let g:javascript_conceal_noarg_arrow_function = "🞅"
-let g:javascript_conceal_underscore_arrow_function = "🞅"
+Plugin 'bling/vim-airline'
+Plugin 'derekwyatt/vim-scala'
+Plugin 'elixir-editors/vim-elixir'
+Plugin 'fatih/vim-go'
+Plugin 'janko-m/vim-test'
+Plugin 'keith/swift.vim'
+Plugin 'kien/ctrlp.vim'
+Plugin 'leafgarland/typescript-vim'
+Plugin 'moll/vim-node'
+Plugin 'scrooloose/syntastic'
+Plugin 'simnalamburt/vim-mundo'
+Plugin 'tpope/vim-abolish'
+Plugin 'tpope/vim-fugitive'
+Plugin 'vim-airline/vim-airline-themes'
+Plugin 'vimwiki/vimwiki'
+Plugin 'scrooloose/nerdtree'
+Plugin 'tpope/vim-surround'
+Plugin 'pangloss/vim-javascript'
+Plugin 'arnaud-lb/vim-php-namespace'
 
-set conceallevel=1
-map <leader>l :exec &conceallevel ? "set conceallevel=0" : "set conceallevel=1"<CR>
+call vundle#end()            " required
+" }}}
+" airline {{{
+set laststatus=2
+let g:airline_theme = 'zenburn'
+let g:airline_left_sep = ''
+let g:airline_left_sep = ''
+let g:airline_right_sep = ''
+let g:airline_right_sep = ''
+" }}}
 
+" nerdtree {{{
+map <C-n> :NERDTreeToggle<CR>
+"}}}
