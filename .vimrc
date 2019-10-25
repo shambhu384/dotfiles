@@ -1,36 +1,70 @@
-" Douglas Black
-" Colors {{{
-syntax enable           " enable syntax processing
-colorscheme apprentice 
-"set termguicolors
-" }}}
-" Misc {{{
-set backspace=indent,eol,start
-let g:vimwiki_list = [{'path': '~/.wiki/'}]
-set clipboard=unnamed
-" }}}
+set nocompatible              " be iMproved, required
+filetype off                  " required
+
+" set the runtime path to include Vundle and initialize
+set rtp+=~/.vim/bundle/Vundle.vim
+call vundle#begin()
+
+" let Vundle manage Vundle, required
+Plugin 'VundleVim/Vundle.vim'
+
+" plugin on GitHub repo
+Plugin 'tpope/vim-fugitive'
+Plugin 'scrooloose/nerdtree'
+Plugin 'Xuyuanp/nerdtree-git-plugin'
+Plugin 'kien/ctrlp.vim'
+Plugin 'tpope/vim-surround'
+Plugin 'scrooloose/syntastic'
+Plugin 'arnaud-lb/vim-php-namespace'
+Plugin 'mileszs/ack.vim'
+Plugin 'airblade/vim-gitgutter'
+Plugin 'junegunn/gv.vim'
+Plugin 'sirver/ultisnips'
+Plugin 'honza/vim-snippets'
+Plugin 'tobys/vmustache'
+Bundle 'tobyS/pdv'
+Plugin 'majutsushi/tagbar'
+Plugin 'vim-airline/vim-airline'
+Plugin 'vim-airline/vim-airline-themes'
+Plugin 'ntpeters/vim-better-whitespace'
+Plugin 'zivyangll/git-blame.vim'
+Bundle 'christoomey/vim-conflicted'
+Plugin 'leafgarland/typescript-vim'
+Plugin 'fatih/vim-go'
+Plugin 'johngrib/vim-game-snake'
+call vundle#end()            " required
+filetype plugin indent on    " required
+" To ignore plugin indent changes, instead use:
+
+" Nerdtree {{
+map <C-n> :NERDTreeToggle<CR>
+let g:NERDTreeDirArrowExpandable = '▸'
+let g:NERDTreeDirArrowCollapsible = '▾'
+" }}
+
+" Basic syntex {{
+syntax enable
+set background=dark
+"colorscheme gloomcontrast
+"let g:airline_theme = "palenight"
+" }}
+
 " Spaces & Tabs {{{
 set tabstop=4           " 4 space tab
 set expandtab           " use spaces for tabs
 set softtabstop=4       " 4 space tab
 set shiftwidth=4
-set modelines=1
 filetype indent on
-"set autoindent
+set autoindent
+set backspace=indent,eol,start
 " }}}
-" UI Layout {{{
-set showcmd             " show command in bottom bar
-set nocursorline        " highlight current line
-set wildmenu
-set lazyredraw
-set showmatch           " higlight matching parenthesis
-set fillchars+=vert:┃
-" }}}
+
 " Searching {{{
 set ignorecase          " ignore case when searching
 set incsearch           " search as characters are entered
 set hlsearch            " highlight all matches
 " }}}
+
 " Folding {{{
 "=== folding ===
 set foldmethod=indent   " fold based on indent level
@@ -39,186 +73,150 @@ set foldenable          " don't fold files by default on open
 nnoremap <space> za
 set foldlevelstart=10   " start with fold level of 1
 " }}}
-" CtrlP {{{
-let g:ctrlp_match_window = 'bottom,order:ttb'
-let g:ctrlp_switch_buffer = 0
-let g:ctrlp_working_path_mode = 0
-let g:ctrlp_custom_ignore = '\vbuild/|dist/|venv/|target/|\.(o|swp|pyc|egg)$'
+
+" Ctrl + P {{{
+let g:ctrlp_map = '<c-p>'
+let g:ctrlp_cmd = 'CtrlP'
+set wildignore+=*/tmp/*,*.so,*.swp,*.zip     " MacOSX/Linux
+let g:ctrlp_working_path_mode = 'ra'
+
+let g:ctrlp_custom_ignore = '\v[\/]\.(git|hg|svn)$'
+let g:ctrlp_custom_ignore = {
+  \ 'dir':  '\v[\/]\.(git|hg|svn)$',
+  \ 'file': '\v\.(exe|so|dll)$',
+  \ 'link': 'some_bad_symbolic_links',
+  \ }
+
+let g:ctrlp_user_command = 'find %s -type f'
+let g:ctrlp_user_command = ['.git', 'cd %s && git ls-files -co --exclude-standard']
 " }}}
+
+" Uni {{{
+
+" Trigger configuration. Do not use <tab> if you use https://github.com/Valloric/YouCompleteMe.
+let g:UltiSnipsExpandTrigger="<tab>"
+let g:UltiSnipsJumpForwardTrigger="<c-b>"
+let g:UltiSnipsJumpBackwardTrigger="<c-z>"
+
+" If you want :UltiSnipsEdit to split your window.
+let g:UltiSnipsEditSplit="vertical"
+" }}
+
+
 " Syntastic {{{
-" let g:syntastic_python_flake8_args='--ignore=E501'
-" let g:syntastic_ignore_files = ['.java$']
-" let g:syntastic_python_python_exec = 'python3'
-" }}}
-" AutoGroups {{{
-augroup configgroup
-    autocmd!
-    autocmd VimEnter * highlight clear SignColumn
-    autocmd BufEnter *.cls setlocal filetype=java
-    autocmd BufEnter *.zsh-theme setlocal filetype=zsh
-    autocmd BufEnter Makefile setlocal noexpandtab
-    autocmd BufEnter *.sh setlocal tabstop=2
-    autocmd BufEnter *.sh setlocal shiftwidth=2
-    autocmd BufEnter *.sh setlocal softtabstop=2
-    autocmd BufEnter *.py setlocal tabstop=4
-    autocmd BufEnter *.md setlocal ft=markdown
-    autocmd BufEnter *.go setlocal noexpandtab
-    autocmd BufEnter *.avsc setlocal ft=json
-augroup END
-" }}}
-" Testing {{{
-let test#strategy = 'neovim'
-let test#python#runner = 'nose'
-" }}}
-" Backups {{{
-"set backup
-"set backupdir=~/.vim-tmp,~/.tmp,~/tmp,/var/tmp,/tmp
-"set backupskip=/tmp/*,/private/tmp/*
-"set directory=~/.vim-tmp,~/.tmp,~/tmp,/var/tmp,/tmp
-"set writebackup
-" }}}
+set statusline+=%#warningmsg#
+set statusline+=%{SyntasticStatuslineFlag()}
+set statusline+=%*
 
-" Vim Plugin {{{
-set rtp+=~/.vim/bundle/Vundle.vim
-call vundle#begin()
-" let Vundle manage Vundle, required
-Plugin 'VundleVim/Vundle.vim'
+"let g:syntastic_debug = 3
+let g:syntastic_always_populate_loc_list = 0
+let g:syntastic_auto_loc_list = 0
+let g:syntastic_check_on_open = 0
+let g:syntastic_check_on_wq = 0
+let g:syntastic_aggregate_errors = 1
+" let g:syntastic_auto_jump = 1
 
-Plugin 'bling/vim-airline'
-Plugin 'kien/ctrlp.vim'
-"Plugin 'scrooloose/syntastic'
-Plugin 'tpope/vim-abolish'
-Plugin 'tpope/vim-fugitive'
-Plugin 'vim-airline/vim-airline-themes'
-Plugin 'scrooloose/nerdtree'
-Plugin 'Xuyuanp/nerdtree-git-plugin'
-Plugin 'tpope/vim-surround'
-Plugin 'pangloss/vim-javascript'
-Plugin 'arnaud-lb/vim-php-namespace'
-Plugin 'majutsushi/tagbar'
-Plugin 'evidens/vim-twig'
-Plugin 'mileszs/ack.vim'
-Plugin 'sirver/ultisnips'
-" Plugin 'valloric/youcompleteme' not this time
-"Plugin 'chrisbra/changesPlugin' // not need to show file changes
-Plugin 'ntpeters/vim-better-whitespace'
-Plugin 'avakhov/vim-yaml'
-Plugin 'https://github.com/docteurklein/php-getter-setter.vim'
-Plugin 'zivyangll/git-blame.vim'
-Plugin 'StanAngeloff/php.vim'
+let g:syntastic_php_checkers = ['php', 'phpcs', 'phpmd', 'phpstan']
+let g:syntastic_php_phpcs_args='--standard=PEAR,PSR2,Zend'
+let g:syntastic_php_phpstan_args='--level=7 -n'
+let g:syntastic_php_phpcs_checker = 1
+let g:syntastic_php_phpstan_checker = 1
+let g:syntastic_php_phpmd_checker = 1
+let g:syntastic_php_phpmd_args=''
 
-call vundle#end()            " required
-" }}}
-" airline {{{
-set laststatus=2
-let g:airline_theme = 'zenburn'
-let g:airline_left_sep = ''
-let g:airline_left_sep = ''
-let g:airline_right_sep = ''
-let g:airline_right_sep = ''
-" }}}
+let g:syntastic_always_populate_loc_list = 1
+let g:syntastic_auto_loc_list = 1
+let g:syntastic_check_on_open = 1
+let g:syntastic_check_on_wq = 0
+let g:syntastic_javascript_checkers = ['eslint']
 
-" nerdtree {{{
-map <C-n> :NERDTreeToggle<CR>
-"}}}
-" Leader Shortcuts {{{
-let mapleader=","
-" }}}
-set tags+=tags
+let g:syntastic_error_symbol = '😡'
+let g:syntastic_warning_symbol = '⚠️'
+let g:syntastic_style_error_symbol = '❗'
+let g:syntastic_style_warning_symbol = '💩'
 
+highlight link SyntasticErrorSign SignColumn
+highlight link SyntasticWarningSign SignColumn
+highlight link SyntasticStyleErrorSign SignColumn
+highlight link SyntasticStyleWarningSign SignColumn
+
+let g:syntastic_php_phpcs_args='--tab-width=0'
+set tabstop=8
+
+"let g:syntastic_yaml_checkers = ['jsyaml', 'yamllint', 'yamlxs']
+" A}}}
+
+" vim-php-namespace {{{
 function! IPhpInsertUse()
     call PhpInsertUse()
     call feedkeys('a',  'n')
 endfunction
 autocmd FileType php inoremap <Leader>u <Esc>:call IPhpInsertUse()<CR>
 autocmd FileType php noremap <Leader>u :call PhpInsertUse()<CR>
-
-function! IPhpExpandClass()
-    call PhpExpandClass()
-    call feedkeys('a', 'n')
-endfunction
-autocmd FileType php inoremap <Leader>e <Esc>:call IPhpExpandClass()<CR>
-autocmd FileType php noremap <Leader>e :call PhpExpandClass()<CR>
-
-
-" Highlight columns 120
-let &colorcolumn='130'
-
-" Tag bar {{{
-nmap <F8> :TagbarToggle<CR>
 " }}}
+"
+" change the mapleader from \ to ,
+let mapleader=","
+
+" Ack {{
+if executable('ag')
+  let g:ackprg = 'ag --vimgrep'
+endif
+"}}}
+
+" vim - git {{{
+let g:gitgutter_sign_added = '🤞'
+let g:gitgutter_sign_modified = '🤔'
+let g:gitgutter_sign_removed = '😏'
+let g:gitgutter_sign_removed_first_line = '🙃'
+let g:gitgutter_sign_modified_removed = '🙃'
+" }}}
+"
+
+" PHP documenter script bound to Control-P
+":autocmd FileType php inoremap <C-d> <ESC>:call PhpDocSingle()<CR>i
+"autocmd FileType php nnoremap <C-d> :call PhpDocSingle()<CR>
+"autocmd FileType php vnoremap <C-d> :call PhpDocRange()<CR>
+let g:pdv_template_dir = $HOME ."/.vim/bundle/pdv/templates_snip"
+autocmd FileType php inoremap <buffer> <C-d> <ESC>:call pdv#DocumentWithSnip()<CR>i
+autocmd FileType php nnoremap <C-d> :call pdv#DocumentWithSnip()<CR>
+autocmd FileType php vnoremap <C-d> :call pdv#DocumentWithSnip()<CR>
+
+
+nmap <F8> :TagbarToggle<CR>
+
+" Airline {{{
+
+" powerline symbols
+let g:airline_left_sep = ''
+let g:airline_left_alt_sep = ''
+let g:airline_right_sep = ''
+let g:airline_right_alt_sep = ''
+" }}
 
 " Select and TAB {{{
 vmap <Tab> >gv
 vmap <S-Tab> <gv
 " }}}
 " Paste toggle {{{
-set pastetoggle="<F12>"
+set pastetoggle="<F5>"
 " }}}
-" Nerd Git Tree {{{
-let g:NERDTreeIndicatorMapCustom = {
-    \ "Modified"  : "✹",
-    \ "Staged"    : "✚",
-    \ "Untracked" : "✭",
-    \ "Renamed"   : "➜",
-    \ "Unmerged"  : "═",
-    \ "Deleted"   : "✖",
-    \ "Dirty"     : "✗",
-    \ "Clean"     : "✔︎",
-    \ 'Ignored'   : '☒',
-    \ "Unknown"   : "?"
-    \ }
-" }}}
-let g:changes_autocmd = 1
 
-" {{
-
-set statusline=%<%f%<%{FileTime()}%<%h%m%r%=%-20.(line=%03l,col=%02c%V,totlin=%L%)\%h%m%r%=%-30(,BfNm=%n%Y%)\%P\*%=%{CurTime()}
-set rulerformat=%15(%c%V\ %p%%%)
-"set rulerformat=%<%f%<%{FileTime()}%<%h%m%r%=%-20.(line=%03l,col=%02c%V,totlin=%L%)\%h%m%r%=%-30(,BfNm=%n%Y%)\%P\*%=%{CurTime()}
-
-function! FileTime()
-  let ext=tolower(expand("%:e"))
-  let fname=tolower(expand('%<'))
-  let filename=fname . '.' . ext
-  let msg=""
-  let msg=msg." ".strftime("(Modified %b,%d %y %H:%M:%S)",getftime(filename))
-  return msg
-endfunction
-
-function! CurTime()
-  let ftime=""
-  let ftime=ftime." ".strftime("%b,%d %y %H:%M:%S")
-  return ftime
-endfunction
-" }}
-" Yaml Bind {{{
-if exists("b:did_indent")
-  finish
-endif
-"runtime! indent/ruby.vim
-"unlet! b:did_indent
-let b:did_indent = 1
-
-setlocal autoindent sw=4 et
-setlocal indentexpr=GetYamlIndent()
-setlocal indentkeys=o,O,*<Return>,!^F
-
-function! GetYamlIndent()
-  let lnum = v:lnum - 1
-  if lnum == 0
-    return 0
-  endif
-  let line = substitute(getline(lnum),'\s\+$','','')
-  let indent = indent(lnum)
-  let increase = indent + &sw
-  if line =~ ':$'
-    return increase
-  else
-    return indent
-  endif
-endfunction
-" }}}
 
 " Toggle spelling hints
 nnoremap <silent> <leader>ts :set spell!<CR>
+
+" Git blame
+nnoremap <Leader>s :<C-u>call gitblame#echo()<CR>
+
+" Git merge conflict
+set stl+=%{ConflictedVersion()}
+
+
+set undofile " Maintain undo history between sessions
+set undodir=~/.vim/undodir
+
+
+" Syntax check
+let g:syntastic_mode_map = { 'mode': 'passive', 'active_filetypes': [],'passive_filetypes': [] }
+nnoremap <leader>e :SyntasticCheck<CR> :SyntasticToggleMode<CR>
