@@ -6,8 +6,7 @@ set rtp+=~/.vim/bundle/Vundle.vim
 call vundle#begin()
 
 " let Vundle manage Vundle, required
-Plugin 'VundleVim/Vundle.vim'
-
+Plugin 'VundleVim/Vundle.vim' 
 " plugin on GitHub repo
 Plugin 'tpope/vim-fugitive'
 Plugin 'scrooloose/nerdtree'
@@ -32,6 +31,7 @@ Bundle 'christoomey/vim-conflicted'
 Plugin 'leafgarland/typescript-vim'
 Plugin 'fatih/vim-go'
 Plugin 'johngrib/vim-game-snake'
+Plugin 'adoy/vim-php-refactoring-toolbox'
 call vundle#end()            " required
 filetype plugin indent on    " required
 " To ignore plugin indent changes, instead use:
@@ -130,10 +130,10 @@ let g:syntastic_check_on_open = 1
 let g:syntastic_check_on_wq = 0
 let g:syntastic_javascript_checkers = ['eslint']
 
-let g:syntastic_error_symbol = '😡'
+let g:syntastic_error_symbol = '🤬'
 let g:syntastic_warning_symbol = '⚠️'
 let g:syntastic_style_error_symbol = '❗'
-let g:syntastic_style_warning_symbol = '💩'
+let g:syntastic_style_warning_symbol = '😠'
 
 highlight link SyntasticErrorSign SignColumn
 highlight link SyntasticWarningSign SignColumn
@@ -220,3 +220,9 @@ set undodir=~/.vim/undodir
 " Syntax check
 let g:syntastic_mode_map = { 'mode': 'passive', 'active_filetypes': [],'passive_filetypes': [] }
 nnoremap <leader>e :SyntasticCheck<CR> :SyntasticToggleMode<CR>
+
+
+nmap ,f :NERDTreeFind<CR>
+
+let g:go_def_mode='gopls'
+let g:go_info_mode='gopls'
